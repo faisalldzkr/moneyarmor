@@ -1,0 +1,1 @@
+Untuk dapat menjalankan project ini harap install semua yang diperlukan, setelah install dapat menjalankan project di terminal visual studio code maupun di command prompt dengan code python manage.py runserver
