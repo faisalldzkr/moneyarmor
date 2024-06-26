@@ -1,0 +1,136 @@
+{% load static %}
+{% load socialaccount %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!--=============== REMIXICONS ===============-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+    
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/front-end-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.googleapis.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sign.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <title>Registrasi</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-toggle" id="header-toggle"></div>
+            <h1>Money Armor</h1>
+            <a href="" class="header-logo">
+                <img src="{% static 'img/removebgPreview2.png' %}" alt="Logo">
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <h1 style="margin-top: 7rem;" class="tengah">Registrasi</h1>
+        <div class="social-login">
+            <a href="{% provider_login_url 'google' %}">
+                <img src="{% static 'img/icons8-google.svg' %}" alt="Google Login" title="Login with Google">
+            </a>
+        </div>
+        <br>
+        <div id="atau">-------------------- atau --------------------</div>
+
+        <form id="register-form">
+            {% csrf_token %}
+            <label for="nama-dep">Nama Depan:</label>
+            <input type="text" id="nama-dep" name="first_name" placeholder="Masukkan nama depan">
+            <label for="nama-bel">Nama Belakang:</label>
+            <input type="text" id="nama-bel" name="last_name" placeholder="Masukkan nama belakang">
+            <label for="email">Alamat Email:</label>
+            <input type="email" id="email" name="email" placeholder="Masukkan alamat email">
+            <label for="password">Kata Sandi:</label>
+            <input type="password" id="password" name="password" placeholder="Masukkan kata sandi">
+            <label for="confirm-password">Ulangi Kata Sandi:</label>
+            <input type="password" id="confirm-password" placeholder="Ulangi kata sandi">
+            <button type="submit" style="margin-bottom: 0.8rem;">Daftar</button>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah form dari submit default
+
+            var firstName = document.getElementById('nama-dep').value;
+            var lastName = document.getElementById('nama-bel').value;
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirm-password').value;
+
+            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Semua bidang harus diisi!',
+                });
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Kata sandi tidak cocok!',
+                });
+                return;
+            }
+
+            var formData = new FormData(this);
+
+            fetch("{% url 'regis' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Registrasi Berhasil',
+                        text: 'Anda berhasil mendaftar!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "{% url 'reg_verify_otp' %}";
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

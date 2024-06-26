@@ -1,0 +1,138 @@
+{% load static %}
+{% load socialaccount %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!--=============== REMIXICONS ===============-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+    
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/front-end-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.googleapis.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sign.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <title>Login</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-toggle" id="header-toggle"></div>
+            <h1>Money Armor</h1>
+            <a href="{% url 'index' %}" class="header-logo">
+                <img src="{% static 'img/removebgPreview2.png' %}" alt="Logo">
+            </a>
+        </div>
+    </header>
+    
+    <main>
+        <h1 style="margin-top: 7rem;" class="tengah">Login</h1>
+
+        <div class="social-login">
+            <a href="{% provider_login_url 'google' %}">
+                <img src="{% static 'img/icons8-google.svg' %}" alt="Google Login" title="Login with Google">
+            </a>
+        </div>
+        <br>
+        <div id="atau">
+            -------------------- atau --------------------
+        </div>
+        
+        <form id="login-form" method="post">
+            {% csrf_token %}
+            <label for="email">Alamat Email:</label>
+            <input type="email" id="email" name="email" placeholder="Masukkan alamat email">
+            <div class="error-message" id="email-error"></div>
+
+            <label for="password">Kata Sandi:</label>
+            <input type="password" id="password" name="password" placeholder="Masukkan kata sandi">
+            <div class="error-message" id="password-error"></div>
+            
+            <a href="{% url 'forgotpw' %}" style="font-size: 13px; cursor: pointer;">
+                <label style="margin-bottom: 0.8rem;">Lupa Password?</label>
+            </a>
+            
+            <button type="submit">
+                Masuk
+            </button>
+
+            <label for="regis">Belum punya akun? 
+                <a href="{% url 'regis' %}">Daftar disini!</a>
+            </label>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah form dari submit default
+
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            if (!email) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Email tidak boleh kosong!',
+                });
+                return;
+            }
+
+            if (!password) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Kata sandi tidak boleh kosong!',
+                });
+                return;
+            }
+
+            // Kirim form via AJAX
+            fetch("{% url 'login' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = data.redirect_url;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan pada server.'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <style>
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .chat-header {
+            background: #0077cc;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        .chatbox {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #fefefe;
+        }
+        .chat {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .chat p {
+            font-size: 0.95rem;
+            max-width: 75%;
+            white-space: pre-wrap;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .incoming p {
+            background: #f2f2f2;
+            color: #000;
+            border-radius: 10px 10px 10px 0;
+        }
+        .outgoing {
+            justify-content: flex-end;
+        }
+        .outgoing p {
+            background: #0077cc;
+            color: #fff;
+            border-radius: 8px 8px 0 8px;
+        }
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background: #fff;
+            border-top: 1px solid #ccc;
+        }
+        .chat-input textarea {
+            flex: 1;
+            resize: none;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .chat-input button {
+            background: #0077cc;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            margin-left: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .chat-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .chat-buttons button {
+            padding: 10px;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #0077cc;
+            color: white;
+            text-align: left;
+        }
+    </style>
+    <title>Robo Chat</title>
+{% endblock head %}
+
+{% block sidebar %}
+    <a href="{% url 'beranda' %}" class="sidebar-link">
+        <i class="ri-home-5-line"></i>
+        <span class="sidebar-link-name">Dashboard</span>
+        <span class="sidebar-link-floating">Dashboard</span>
+    </a>
+
+    <a href="{% url 'alokasi' %}" class="sidebar-link">
+        <i class="ri-calculator-line"></i>
+        <span class="sidebar-link-name">Alokasi Dana</span>
+        <span class="sidebar-link-floating">Alokasi Dana</span>
+    </a>
+
+    <a href="{% url 'langganan' %}" class="sidebar-link">
+        <i class="ri-money-dollar-circle-line"></i>
+        <span class="sidebar-link-name">Langganan</span>
+        <span class="sidebar-link-floating">Langganan</span>
+    </a>
+
+    <a href="{% url 'robochat' %}" class="sidebar-link active-link">
+        <i class="ri-question-answer-line"></i>
+        <span class="sidebar-link-name">RoboChat</span>
+        <span class="sidebar-link-floating">RoboChat</span>
+    </a>
+{% endblock sidebar %}
+
+{% block content %}
+    <!--=============== MAIN ===============-->
+    <main class="main container chat-container" id="main">
+        <ul class="chatbox">
+            <li class="chat incoming">
+                <span class="material-symbols-outlined">smart_toy</span>
+                <p>Halo <br> Apa masalahmu?</p>
+            </li>
+        </ul>
+        <div class="chat-input">
+            <textarea placeholder="Masukkan Sebuah Pesan..." required></textarea>
+            <button id="send-btn">Kirim</button>
+        </div>
+
+        <script>
+            const chatInput = document.querySelector(".chat-input textarea");
+            const sendChatBtn = document.querySelector(".chat-input button");
+            const chatbox = document.querySelector(".chatbox");
+
+            let userMessage;
+            const API_KEY = "YOUR_GEMINI_API_KEY"; // Ganti dengan API key Anda
+            const inputInitHeight = chatInput.scrollHeight;
+
+            const createChatLi = (message, className) => {
+                const chatLi = document.createElement("li");
+                chatLi.classList.add("chat", className);
+                let chatContent = `<p></p>`;
+                chatLi.innerHTML = chatContent;
+                chatLi.querySelector("p").textContent = message;
+                return chatLi;
+            }
+
+            const generateResponse = (incomingChatLi) => {
+                const API_URL = "https://generativeai.googleapis.com/v1beta2/models/text-bison-001:generateMessage?key=" + API_KEY;
+                const messageElement = incomingChatLi.querySelector("p");
+
+                const requestOptions = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        prompt: {
+                            messages: [{ content: userMessage }]
+                        }
+                    })
+                };
+                
+                fetch(API_URL, requestOptions)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.candidates && data.candidates.length > 0) {
+                            messageElement.textContent = data.candidates[0].output;
+                        } else {
+                            throw new Error('Invalid response format');
+                        }
+                    })
+                    .catch((error) => {
+                        messageElement.classList.add("error");
+                        messageElement.textContent = "Oops! terjadi kesalahan. Mohon coba lagi.";
+                    })
+                    .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
+            }
+
+            const handleChat = () => {
+                userMessage = chatInput.value.trim();
+                if (!userMessage) return;
+                chatInput.value = "";
+                chatInput.style.height = `${inputInitHeight}px`;
+
+                chatbox.appendChild(createChatLi(userMessage, "outgoing"));
+                chatbox.scrollTo(0, chatbox.scrollHeight);
+
+                if (userMessage.toLowerCase() === 'halo') {
+                    displayQuestionButtons();
+                } else {
+                    setTimeout(() => {
+                        const incomingChatLi = createChatLi("Thinking...", "incoming");
+                        chatbox.appendChild(incomingChatLi);
+                        chatbox.scrollTo(0, chatbox.scrollHeight);
+                        generateResponse(incomingChatLi);
+                    }, 600);
+                }
+            }
+
+            const displayQuestionButtons = () => {
+                const questions = [
+                    "Silahkan klik list pertanyaan di bawah untuk mendapatkan informasi yang anda butuhkan.",
+                    "Apa itu Money Armor?",
+                    "Bagaimana cara mengganti password atau lupa password?",
+                    "Bagaimana cara menggunakan Money Armor?",
+                    "Jelaskan tentang metode pengalokasian dana 70-20-10 dan 50-30-20?",
+                ];
+
+                const buttonsContainer = document.createElement("div");
+                buttonsContainer.classList.add("chat-buttons");
+
+                questions.forEach(question => {
+                    const button = document.createElement("button");
+                    button.textContent = question;
+                    button.addEventListener("click", () => {
+                        chatInput.value = question;
+                        handleQuestion(question);
+                    });
+                    buttonsContainer.appendChild(button);
+                });
+
+                const incomingChatLi = createChatLi("", "incoming");
+                incomingChatLi.appendChild(buttonsContainer);
+                chatbox.appendChild(incomingChatLi);
+                chatbox.scrollTo(0, chatbox.scrollHeight);
+            }
+
+            const handleQuestion = (question) => {
+                const incomingChatLi = createChatLi("Thinking...", "incoming");
+                chatbox.appendChild(incomingChatLi);
+                chatbox.scrollTo(0, chatbox.scrollHeight);
+
+                setTimeout(() => {
+                    let response = "";
+                    switch(question) {
+                        case "Apa itu Money Armor?":
+                            response = "Money Armor adalah platform yang akan membantu Anda untuk mengalokasi keuangan mengalokasi pengeluaran dan pemasukan dana bagi Anda genyang memiliki kebiasaan konsumtif sehingga dapat mengatasi kesulitan mereka dalam mengatur keuangan hingga mencapai kondisi keuangan yang baik Anda.";
+                            break;
+                        case "Bagaimana cara mengganti password atau lupa password?":
+                            response = "Untuk mengganti password silahkan klik lupa password. Anda akan diarahkan untuk mereset password dan memasukan kode otp yang akan dikirim ke email Anda.";
+                            break;
+                        case "Bagaimana cara menggunakan Money Armor?":
+                            response = `1. Pendaftaran dan Login
+ - Pendaftaran: Pengguna baru harus mendaftar dengan mengisi informasi pribadi seperti nama, email, dan membuat kata sandi.
+ - Login: Pengguna yang sudah terdaftar dapat login dengan menggunakan email dan kata sandi yang telah dibuat.
+
+2. Menentukan Metode Alokasi
+ - Setelah data informasi dilengkapi, pengguna menentukan metode alokasi atau pengalokasian yang ingin digunakan.
+ - Pengguna dapat memilih metode alokasi yang direkomendasikan oleh aplikasi, seperti:
+   * 70/20/10
+   * 50/30/20
+   * Personalisasi. Ini juga dapat mengatur alokasi sesuai kebutuhan (kostumisasi).
+
+3. Input Pemasukan Bulanan
+   Setelah berhasil login, pengguna menginput pemasukan bulanan mereka ke dalam aplikasi.
+
+4. Informasi Jenis Pengeluaran
+   Pengguna memberikan informasi mengenai jenis pengeluaran yang biasa mereka keluarkan, seperti:
+   * Makanan
+   * Transportasi
+   * Token
+   * Pembelian Baju
+   * Pengeluaran Lainnya
+
+5. Menghitung Pengeluaran Maksimal
+   Dari data-data yang telah dimasukkan oleh pengguna, aplikasi akan menghitung pengeluaran maksimal yang harus dikeluarkan oleh pengguna, termasuk:
+   - Pengeluaran harian
+   - Pengeluaran mingguan
+   - Pengeluaran untuk tabungan
+   - Pengeluaran lainnya
+
+6. Peringatan Batas Pengeluaran
+   Aplikasi akan memberikan peringatan jika pengguna melewati batas maksimal pengeluaran yang telah ditetapkan.
+
+Dengan mengikuti langkah-langkah di atas, anda dapat mengelola keuangan mereka dengan lebih efektif menggunakan aplikasi ini.`;
+                            break;
+                        case "Jelaskan tentang metode pengalokasian dana 70-20-10 dan 50-30-20?":
+                            response = `Baik, berikut penjelasan terkait beberapa metode:
+- Metode 70-20-10
+  => Mengalokasikan 70% dana untuk kebutuhan, 20% untuk tabungan dan dana darurat, dan 10% untuk hiburan. 
+- Metode 50-30-20
+  => Mengalokasikan 50% dana untuk kebutuhan pokok, 30% untuk keinginan, dan 20% untuk tabungan dan investasi"
+- Metode Personalisasi
+  => Fitur khusus untuk anda yang ingin mendapatkan rekomendasi dan alokasi dana yang paling cocok untuk kebutuhan anda. Untuk berlangganan silahkan masuk ke halaman Langganan`;
+                            break;
+                        default:
+                            response = "Maaf, saya tidak mengerti pertanyaan Anda.";
+                    }
+                    incomingChatLi.querySelector("p").textContent = response;
+                }, 600);
+            }
+
+            chatInput.addEventListener("input", () => {
+                chatInput.style.height = `${inputInitHeight}px`;
+                chatInput.style.height = `${chatInput.scrollHeight}px`;
+            });
+
+            chatInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+                    e.preventDefault();
+                    handleChat();
+                }
+            });
+            
+            sendChatBtn.addEventListener("click", handleChat);
+        </script>
+    </main>
+{% endblock content %}

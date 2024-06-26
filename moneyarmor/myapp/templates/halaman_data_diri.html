@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--=============== REMIXICONS ===============-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+    
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/front-end-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.googleapis.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sign.css' %}">
+
+    <title>Data Diri</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-toggle" id="header-toggle">
+                <a href="{% url 'beranda' %}" style="color: white;">
+                    <i class="ri-arrow-left-double-line"></i>
+                </a>
+            </div>
+            <h1>Money Armor</h1>
+            <a href="" class="header-logo">
+                <img src="{% static 'img/removebgPreview2.png' %}" alt="">
+            </a>
+        </div>
+    </header>
+
+    <h1 style="margin-top: 7rem;" class="tengah">Data Diri</h1>
+    <form id="data-diri-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ user_email }}" readonly>
+        
+        <label for="nama">Nama:</label>
+        <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap" value="{{ user_name }}">
+        <div class="error-message" id="nama-error">{{ errors.nama }}</div>
+        
+        <label for="jenis-kelamin">Jenis Kelamin:</label>
+        <select id="jenis-kelamin" name="jenis_kelamin">
+            <option value="laki-laki" {% if profile.jenis_kelamin == "laki-laki" %}selected{% endif %}>Laki-laki</option>
+            <option value="perempuan" {% if profile.jenis_kelamin == "perempuan" %}selected{% endif %}>Perempuan</option>
+            <option value="tidak diketahui" {% if profile.jenis_kelamin == "tidak diketahui" %}selected{% endif %}>Tidak diketahui</option>
+        </select>
+        <div class="error-message" id="jenis-kelamin-error">{{ errors.jenis_kelamin }}</div>
+
+        <label for="umur">Umur:</label>
+        <input type="text" id="umur" name="umur" placeholder="Masukkan umur anda" value="{{ profile.umur }}">
+        <div class="error-message" id="umur-error">{{ errors.umur }}</div>
+
+        <label for="pekerjaan">Pekerjaan:</label>
+        <input type="text" id="pekerjaan" name="pekerjaan" placeholder="Masukkan jenis pekerjaan anda" value="{{ profile.pekerjaan }}">
+        <div class="error-message" id="pekerjaan-error">{{ errors.pekerjaan }}</div>
+
+        <label for="phone">Nomor Telepon:</label>
+        <div style="display: flex;">
+            <select id="country-code" name="country-code" style="width: 67px;">
+                <option value="+62" selected>+62</option>
+                <option value="+60">+60</option>
+                <option value="+66">+66</option>
+                <option value="+1">+1</option>
+                <option value="+44">+44</option>
+                <option value="+49">+49</option>
+                <option value="+33">+33</option>
+                <option value="+81">+81</option>
+            </select>
+            <input type="text" id="phone" name="phone" placeholder="812 345 678" value="{{ profile.phone }}" style="flex-grow: 1;">
+        </div>
+        <div class="error-message" id="phone-error">{{ errors.phone }}</div>
+
+        <label for="foto-profil">Foto Profil:</label>
+        <input type="file" id="foto-profil" name="foto_profil" accept="image/*">
+        <div class="error-message" id="foto-profil-error">{{ errors.foto_profil }}</div>
+        
+        <div class="logout-dashboard">
+            <label for="regis" style="font-weight: bold;">Keluar akun? 
+                <a href="{% url 'index' %}" style="color: #0077cc;">Logout</a>
+            </label>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" style="margin-bottom: 8px;">Simpan</button>
+        </div>
+    </form>
+
+    <script src="{% static 'js/front-end-js.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateForm() {
+                let isValid = true;
+                
+                const nama = document.getElementById('nama').value.trim();
+                const umur = document.getElementById('umur').value.trim();
+                const pekerjaan = document.getElementById('pekerjaan').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const fotoProfil = document.getElementById('foto-profil').files[0];
+                
+                resetErrors();
+    
+                if (nama === '') {
+                    showError('Nama tidak boleh kosong');
+                    isValid = false;
+                }
+                
+                if (umur === '' || isNaN(umur) || umur < 1 || umur > 100) {
+                    showError('Umur harus diisi dengan angka antara 1-100');
+                    isValid = false;
+                }
+                
+                if (pekerjaan === '') {
+                    showError('Pekerjaan tidak boleh kosong');
+                    isValid = false;
+                }
+                
+                if (phone === '' || isNaN(phone) || phone.length < 10 || phone.length > 12) {
+                    showError('Nomor telepon harus diisi dengan angka dan memiliki panjang 10-12 digit');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+    
+            function resetErrors() {
+                const errorFields = document.querySelectorAll('.error-message');
+                errorFields.forEach(field => field.textContent = '');
+            }
+    
+            function showError(message) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: message
+                });
+            }
+    
+            const inputs = document.querySelectorAll('#data-diri-form input, #data-diri-form select, #data-diri-form textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    resetErrors();
+                });
+            });
+    
+            document.getElementById('data-diri-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                if (validateForm()) {
+                    const formData = new FormData(this);
+                    fetch('', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Profil berhasil disimpan',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                window.location.href = "{% url 'data-diri' %}";
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Terjadi kesalahan saat menyimpan profil'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Terjadi kesalahan saat menyimpan profil'
+                        });
+                    });
+                }
+            });
+        });
+    </script>      
+</body>
+</html>

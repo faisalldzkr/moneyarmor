@@ -1,0 +1,733 @@
+#html setelah login
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0077cc;
+            color: white;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Adjustments for modal inputs */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+
+        .modal-content form {
+            display: grid;
+            gap: 10px;
+        }
+
+        .modal-content label {
+            font-weight: bold;
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="date"],
+        .modal-content select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .modal-content button {
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .modal-content button:hover {
+            background-color: #005bb5;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Gaya untuk flex container, tabel, dll. tetap seperti sebelumnya */
+        .flex-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .flex-container img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .kolom {
+            flex: 1;
+            padding: 20px;
+            max-width: 400px;
+        }
+
+        .deskripsi {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #070707;
+            margin-bottom: 10px;
+            text-align: left !important;
+        }
+
+        .chart-container {
+            background-color: #fff; /* Set background to white */
+            padding: 20px 0;
+        }
+
+        .table-container {
+            display: none;
+        }
+
+        .table-container.active {
+            display: block;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .btn-group .btn {
+            margin: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background-color: #0077cc;
+            color: white;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-group .btn:hover {
+            background-color: #0077cc;
+            cursor: pointer;
+        }
+
+        .popup-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        .popup-btn:hover {
+            background-color: #005bb5;
+            transform: scale(1.1);
+        }
+
+        .popup-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+            z-index: 1000; /* Ensure it's above other content */
+        }
+    </style>
+
+    <title>Beranda</title>
+{% endblock head %}
+
+{% block sidebar %}
+    <a href="{% url 'beranda' %}" class="sidebar-link active-link">
+        <i class="ri-home-5-line"></i>
+        <span class="sidebar-link-name">Dashboard</span>
+        <span class="sidebar-link-floating">Dashboard</span>
+    </a>
+
+    <a href="{% url 'alokasi' %}" class="sidebar-link">
+        <i class="ri-calculator-line"></i>
+        <span class="sidebar-link-name">Alokasi Dana</span>
+        <span class="sidebar-link-floating">Alokasi Dana</span>
+    </a>
+
+    <a href="{% url 'estatement' %}" class="sidebar-link">
+        <i class="ri-file-chart-line"></i>
+        <span class="sidebar-link-name">E-Statements</span>
+        <span class="sidebar-link-floating">E-Statements</span>
+    </a>
+
+    <a href="{% url 'langganan' %}" class="sidebar-link">
+        <i class="ri-money-dollar-circle-line"></i>
+        <span class="sidebar-link-name">Langganan</span>
+        <span class="sidebar-link-floating">Langganan</span>
+    </a>
+
+    <a href="{% url 'robochat' %}" class="sidebar-link">
+        <i class="ri-question-answer-line"></i>
+        <span class="sidebar-link-name">RoboChat</span>
+        <span class="sidebar-link-floating">RoboChat</span>
+    </a>
+{% endblock sidebar %}
+
+{% block content %}
+    <main class="main container" id="main">
+        <!-- Konten sebelumnya -->
+        <div>
+            <!-- untuk tentang kita -->
+            <section id="home"> 
+                <div class="flex-container">
+                    <img src="#" alt=""/>
+                    <div class="kolom">
+                        <p class="deskripsi">Jangan lupa catat pengeluaran kamu....</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- section for data visualization -->
+            <section id="data-visualization">
+                <div class="chart-container">
+                    <div id="table1" class="table-container active">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Deskripsi</th>
+                                    <th>Kategori</th>
+                                    <th>Debit</th>
+                                    <th>Kredit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Isi data tabel di sini -->
+                                <tr>
+                                    <td>01/01/2024</td>
+                                    <td>Pemasukan 1</td>
+                                    <td>Pemasukan</td>
+                                    <td>Rp 1,000,000</td>
+                                    <td>Rp 0</td>
+                                </tr>
+                                <!-- Data lainnya -->
+                                <tr>
+                                    <td>02/01/2024</td>
+                                    <td>Pemasukan 1</td>
+                                    <td>Pemasukan</td>
+                                    <td>Rp 1,000,000</td>
+                                    <td>Rp 0</td>
+                                </tr>
+
+                                <tr>
+                                    <td>03/01/2024</td>
+                                    <td>Pemasukan 1</td>
+                                    <td>Pemasukan</td>
+                                    <td>Rp 1,000,000</td>
+                                    <td>Rp 0</td>
+                                </tr>
+
+                                <tr>
+                                    <td>04/01/2024</td>
+                                    <td>Pemasukan 1</td>
+                                    <td>Pemasukan</td>
+                                    <td>Rp 1,000,000</td>
+                                    <td>Rp 0</td>
+                                </tr>
+
+                                <tr>
+                                    <td>05/01/2024</td>
+                                    <td>Pemasukan 1</td>
+                                    <td>Pemasukan</td>
+                                    <td>Rp 1,000,000</td>
+                                    <td>Rp 0</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="table2" class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Deskripsi</th>
+                                    <th>Kategori</th>
+                                    <th>Debit</th>
+                                    <th>Kredit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Isi data tabel di sini -->
+                                <tr>
+                                    <td>02/01/2024</td>
+                                    <td>Pengeluaran 1</td>
+                                    <td>Pengeluaran</td>
+                                    <td>Rp 0</td>
+                                    <td>Rp 500,000</td>
+                                </tr>
+                                <!-- Data lainnya -->
+                                <tr>
+                                    <td>03/01/2024</td>
+                                    <td>Pengeluaran 1</td>
+                                    <td>Pengeluaran</td>
+                                    <td>Rp 0</td>
+                                    <td>Rp 500,000</td>
+                                </tr>
+
+                                <tr>
+                                    <td>04/01/2024</td>
+                                    <td>Pengeluaran 1</td>
+                                    <td>Pengeluaran</td>
+                                    <td>Rp 0</td>
+                                    <td>Rp 500,000</td>
+                                </tr>
+
+                                <tr>
+                                    <td>05/01/2024</td>
+                                    <td>Pengeluaran 1</td>
+                                    <td>Pengeluaran</td>
+                                    <td>Rp 0</td>
+                                    <td>Rp 500,000</td>
+                                </tr>
+
+                                <tr>
+                                    <td>06/01/2024</td>
+                                    <td>Pengeluaran 1</td>
+                                    <td>Pengeluaran</td>
+                                    <td>Rp 0</td>
+                                    <td>Rp 500,000</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="table3" class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Deskripsi</th>
+                                    <th>Kategori</th>
+                                    <th>Debit</th>
+                                    <th>Kredit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Isi data tabel di sini -->
+                                <tr>
+                                    <td>03/01/2024</td>
+                                    <td>Total Dana Tersisa</td>
+                                    <td></td>
+                                    <td>Rp 500,000</td>
+                                    <td></td>
+                                </tr>
+                                <!-- Data lainnya -->
+                                <tr>
+                                    <td>04/01/2024</td>
+                                    <td>Total Dana Tersisa</td>
+                                    <td></td>
+                                    <td>Rp 500,000</td>
+                                    <td></td>
+                                </tr>
+
+                                <tr>
+                                    <td>05/01/2024</td>
+                                    <td>Total Dana Tersisa</td>
+                                    <td></td>
+                                    <td>Rp 500,000</td>
+                                    <td></td>
+                                </tr>
+
+                                <tr>
+                                    <td>06/01/2024</td>
+                                    <td>Total Dana Tersisa</td>
+                                    <td></td>
+                                    <td>Rp 500,000</td>
+                                    <td></td>
+                                </tr>
+
+                                <tr>
+                                    <td>07/01/2024</td>
+                                    <td>Total Dana Tersisa</td>
+                                    <td></td>
+                                    <td>Rp 500,000</td>
+                                    <td></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="btn-group">
+                        <button id="prevBtn" class="btn"><i class="ri-arrow-left-s-line"></i></button>
+                        <button id="nextBtn" class="btn"><i class="ri-arrow-right-s-line"></i></button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Updated section for options -->
+            <div>
+                <h2>Pemasukan</h2>
+                <table id="income-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Jumlah</th>
+                            <th>Deskripsi</th>
+                        </tr>
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        {% for income in incomes %}
+                        <tr>
+                            <td>{{ income.date }}</td>
+                            <td>{{ income.amount }}</td>
+                            <td>{{ income.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+    
+            <div>
+                <h2>Pengeluaran</h2>
+                <table id="expense-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Jumlah</th>
+                            <th>Deskripsi</th>
+                        </tr>
+
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                        <tr>
+                            <td>05/01/2024</td>
+                            <td>budidaya</td>
+                            <td>Rp 500,000</td>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        {% for expense in expenses %}
+                        <tr>
+                            <td>{{ expense.date }}</td>
+                            <td>{{ expense.amount }}</td>
+                            <td>{{ expense.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Button to trigger the popup -->
+        <div class="popup-btn" onclick="showPopup()">
+            <i class="ri-add-line"></i>
+        </div>
+
+        <!-- Form to add expenses -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <div class="container">
+                    <form onsubmit="event.preventDefault(); addExpenses(); closePopup();">
+                        <select id="kategori">
+                            <option value="Pemasukan">Pemasukan</option>
+                            <option value="Pengeluaran">Pengeluaran</option>
+                        </select>
+
+                        <label for="tanggal">Tanggal</label>
+                        <input type="date" id="tanggal" name="tanggal">
+
+                        <label for="deskripsi">Deskripsi</label>
+                        <input type="text" id="deskripsi" placeholder="Deskripsi pengeluaran">
+
+                        <label for="category_description">Kategori</label>
+                        <select id="category_description">
+                            <option value="">Pilih Kategori</option>
+                            <!-- Options akan diisi oleh JavaScript -->
+                        </select>
+
+                        <label for="nominal">Nominal</label>
+                        <input type="text" id="nominal" placeholder="Masukkan jumlah tanpa titik">
+
+                        <button type="submit">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Konten sebelumnya -->
+    <script>
+       // Function to add expenses
+       function addExpenses() {
+            const kategori = document.getElementById('kategori').value;
+            const deskripsi = document.getElementById('deskripsi').value;
+            const category_description = document.getElementById('category_description').value;
+            let nominal = document.getElementById('nominal').value;
+            const tanggal = document.getElementById('tanggal').value;
+
+            // Format amount to Rupiah
+            nominal = formatRupiah(nominal, 'Rp');
+
+            // Example: append new row to the expenses table
+            const tableBody = document.querySelector('#table1 tbody');
+            const newRow = `<tr>
+                <td>${tanggal}</td>
+                <td>${deskripsi}</td>
+                <td>${kategori}</td>
+                <td>${nominal}</td>
+                <td>Rp 0</td>
+            </tr>`;
+            tableBody.insertAdjacentHTML('beforeend', newRow);
+        }
+
+        // Function to format nominal to Rupiah format
+        function formatRupiah(angka, prefix) {
+            let number_string = angka.replace(/[^,\d]/g, '').toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                let separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix === undefined ? rupiah : (rupiah ? prefix + ' ' + rupiah : '');
+        }
+
+        // Add event listener to format the amount input on change
+        document.getElementById('nominal').addEventListener('input', function (e) {
+            e.target.value = formatRupiah(this.value, 'Rp');
+        });
+
+        // JavaScript to handle table switching
+        let currentTable = 1;
+
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            currentTable++;
+            if (currentTable > 3) currentTable = 1;
+            switchTable();
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            currentTable--;
+            if (currentTable < 1) currentTable = 3;
+            switchTable();
+        });
+
+        function switchTable() {
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById('table' + i).classList.remove('active');
+            }
+            document.getElementById('table' + currentTable).classList.add('active');
+        }
+
+        // Fungsi untuk menampilkan popup
+        function showPopup() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        // Fungsi untuk menutup popup
+        function closePopup() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        // Tambahkan event listener untuk menutup popup ketika klik di luar modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('myModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Fetch categories and populate the dropdown
+        let incomeCategories = [];
+        let expenseCategories = [];
+
+        document.addEventListener('DOMContentLoaded', fetchCategories);
+
+        function fetchCategories() {
+            fetch('/get_categories/')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched Categories:', data); // Tambahkan logging untuk memeriksa data
+                    incomeCategories = data.income_categories;
+                    expenseCategories = data.expense_categories;
+                    updateCategoryDropdown(); // Initialize dropdown
+                })
+                .catch(error => {
+                    console.error('Error fetching categories:', error);
+                });
+        }
+
+        function updateCategoryDropdown() {
+            const categoryType = document.getElementById('kategori').value;
+            const categoryDropdown = document.getElementById('category_description');
+            categoryDropdown.innerHTML = '<option value="">Pilih Kategori</option>';
+
+            let categories = [];
+            if (categoryType === 'Pemasukan') {
+                categories = incomeCategories;
+            } else if (categoryType === 'Pengeluaran') {
+                categories = expenseCategories;
+            }
+
+            console.log('Selected Category Type:', categoryType); // Logging
+            console.log('Categories to display:', categories); // Logging
+
+            categories.forEach(category => {
+                if (category) { // Check if category is not empty
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.text = category;
+                    categoryDropdown.appendChild(option);
+                }
+            });
+        }
+
+        document.getElementById('kategori').addEventListener('change', updateCategoryDropdown);
+        
+    </script>
+{% endblock content %}

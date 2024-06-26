@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!--=============== REMIXICONS ===============-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+    
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/front-end-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.googleapis.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sign.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <title>Verifikasi OTP</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-toggle" id="header-toggle"></div>
+            <h1>Money Armor</h1>
+            <a href="" class="header-logo">
+                <img src="{% static 'img/removebgPreview2.png' %}" alt="Logo">
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <h1 style="margin-top: 7rem;" class="tengah">Verifikasi OTP</h1>
+        <form id="otp-form" method="POST">
+            {% csrf_token %}
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="otp">OTP:</label>
+            <input type="text" id="otp" name="otp" required>
+            <button type="submit">Verifikasi Kode</button>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('otp-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var email = document.getElementById('email').value;
+            var otp = document.getElementById('otp').value;
+
+            fetch("{% url 'pass_verify_otp' %}", {
+                method: 'POST',
+                body: JSON.stringify({ email: email, otp: otp }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'OTP Diverifikasi',
+                        text: 'OTP berhasil diverifikasi!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "{% url 'reset_password' %}?email=" + encodeURIComponent(data.email);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                    });
+                }
+            })
+            .catch((error) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Terjadi kesalahan dalam proses verifikasi.',
+                });
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

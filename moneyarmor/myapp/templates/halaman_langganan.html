@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/langganan.css' %}">
+    <style>
+        button {
+            width: 100%;
+            background-color: #0077cc;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+        }
+    </style>
+    <title>Langganan</title>
+{% endblock head %}
+
+{% block sidebar %}
+    <a href="{% url 'beranda' %}" class="sidebar-link">
+        <i class="ri-home-5-line"></i>
+        <span class="sidebar-link-name">Dashboard</span>
+        <span class="sidebar-link-floating">Dashboard</span>
+    </a>
+
+    <a href="{% url 'alokasi' %}" class="sidebar-link">
+        <i class="ri-calculator-line"></i>
+        <span class="sidebar-link-name">Alokasi Dana</span>
+        <span class="sidebar-link-floating">Alokasi Dana</span>
+    </a>
+
+    <a href="{% url 'langganan' %}" class="sidebar-link active-link">
+        <i class="ri-money-dollar-circle-line"></i>
+        <span class="sidebar-link-name">Langganan</span>
+        <span class="sidebar-link-floating">Langganan</span>
+    </a>
+
+    <a href="{% url 'robochat' %}" class="sidebar-link">
+        <i class="ri-question-answer-line"></i>
+        <span class="sidebar-link-name">RoboChat</span>
+        <span class="sidebar-link-floating">RoboChat</span>
+    </a>
+{% endblock sidebar %}
+
+{% block content %}
+    <!--=============== MAIN ===============-->
+    <main class="main container" id="main">
+        <!-- untuk paket -->
+        <section id="paket">
+            <div class="tengah">
+                <div class="kolom">
+                    <h2>Paket Yang Kami Tawarkan</h2>
+                    <p style="color: #0077cc;">Money Armor Membantumu!</p>
+                </div>
+                <div class="paket-list">
+                    <div class="paket-card">
+                        <h3>Mulai perjalanan mengelola Finansialmu!</h3>
+                        <div class="Paket">
+                            <div class="paket-title">
+                                <h1>Free</h1>
+                            </div>
+                            <div class="desc-list">
+                                <p>Nikmati fitur dasar untuk pengelolaan keuangan anda dan mulai bangun kebiasaan baik tingkatkan literasi finansial hari ini</p>
+                            </div>
+                            <div class="Price">
+                                <span>Rp. 0,-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="paket-card">
+                        <h3>Mulai perjalanan mengelola Finansialmu!</h3>
+                        <div class="Paket">
+                            <div class="paket-title">
+                                <h1>Bulanan</h1>
+                            </div>
+                            <div class="desc-list">
+                                <p>Optimalkan pengelolaan keuangan pribadi Anda dengan Paket Dasar kami untuk satu bulan pertama. Dapatkan fitur tambahan seperti pencatatan otomatis dan laporan keuangan yang lebih detail untuk membantu Anda mencapai tujuan finansialmu</p>
+                            </div>
+                            <div class="Price">
+                                <span>Rp. 49.900,-</span>
+                            </div>
+                            <br>
+                            <button>COMING SOON</button>
+                        </div>
+                    </div>
+                    <div class="paket-card">
+                        <h3>Mulai perjalanan mengelola Finansialmu!</h3>
+                        <div class="Paket">
+                            <div class="paket-title">
+                                <h1>Tahunan</h1>
+                            </div>
+                            <div class="desc-list">
+                                <p>Raih kontrol penuh atas keuangan Anda dengan Paket Premium satu tahun. Nikmati sistem pengelolaan keuangan yang mudah diakses, rincian pengeluaran, visualisasi data, dan laporan keuangan yang dapat di download sesuka hati. ke konsultasi ahli keuangan untuk perencanaan yang lebih baik</p>
+                            </div>
+                            <div class="Price">
+                                <span>Rp. 599.000,-</span>
+                            </div>
+                            <br>
+                            <button>COMING SOON</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock content %}

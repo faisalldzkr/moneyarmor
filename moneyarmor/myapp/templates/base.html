@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--=============== REMIXICONS ===============-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+        
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/front-end-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.googleapis.css' %}">
+
+    {% block head %}
+    {% endblock head %}
+</head>
+
+<body>
+    <!--=============== HEADER ===============-->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-toggle" id="header-toggle">
+                <i class="ri-menu-line"></i>
+            </div>
+
+            <h1>Money Armor</h1>
+
+            <a href="front-end-html.html" class="header-logo">
+                <img src="{% static 'img/removebgPreview2.png' %}" alt="">
+            </a>
+        </div>
+    </header>
+
+    <!--=============== SIDEBAR ===============-->
+    <div class="sidebar" id="sidebar">
+        <nav class="sidebar-container">
+            <div class="sidebar-content">
+                <div class="sidebar-list">
+                    {% block sidebar %}
+                    {% endblock sidebar %}
+                </div>
+            </div>
+
+            <div class="sidebar-account">
+                {% if request.user.is_authenticated %}
+                    {% if request.session.foto_profil %}
+                        <img src="{{ request.session.foto_profil }}" alt="sidebar image" class="sidebar-perfil">
+                    {% else %}
+                        <img src="{% static 'img/perfil.png' %}" alt="sidebar image" class="sidebar-perfil">
+                    {% endif %}
+                {% else %}
+                    <img src="{% static 'img/perfil.png' %}" alt="sidebar image" class="sidebar-perfil">
+                {% endif %}
+
+                <div class="sidebar-names">
+                    {% if request.user.is_authenticated %}
+                        <h3 class="sidebar-name">{{ request.session.user_name }}</h3>
+                        <span class="sidebar-email">{{ request.session.user_email }}</span>
+                    {% else %}
+                        <h3 class="sidebar-name">Guest</h3>
+                        <span class="sidebar-email">guest@example.com</span>
+                    {% endif %}
+                </div>
+                
+                <a href="{% url 'data-diri' %}">
+                    <i class="ri-arrow-right-s-line"></i>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    {% block content %}
+    {% endblock content %}
+    
+    <!--=============== MAIN JS ===============-->
+    <script src="{% static 'js/front-end-js.js' %}"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

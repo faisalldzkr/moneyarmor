@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/alokasicss.css' %}">
+    <style>
+        .buttonbaru{
+            font-weight: bold;
+            background-color: #0077cc;
+            color: white;
+        }
+    </style>
+    <title>Alokasi Dana</title>
+{% endblock head %}
+
+{% block sidebar %}
+    <a href="{% url 'beranda' %}" class="sidebar-link">
+        <i class="ri-home-5-line"></i>
+        <span class="sidebar-link-name">Dashboard</span>
+        <span class="sidebar-link-floating">Dashboard</span>
+    </a>
+
+    <a href="{% url 'alokasi' %}" class="sidebar-link active-link">
+        <i class="ri-calculator-line"></i>
+        <span class="sidebar-link-name">Alokasi Dana</span>
+        <span class="sidebar-link-floating">Alokasi Dana</span>
+    </a>
+
+    <a href="{% url 'langganan' %}" class="sidebar-link">
+        <i class="ri-money-dollar-circle-line"></i>
+        <span class="sidebar-link-name">Langganan</span>
+        <span class="sidebar-link-floating">Langganan</span>
+    </a>
+
+    <a href="{% url 'robochat' %}" class="sidebar-link">
+        <i class="ri-question-answer-line"></i>
+        <span class="sidebar-link-name">RoboChat</span>
+        <span class="sidebar-link-floating">RoboChat</span>
+    </a>
+{% endblock sidebar %}
+
+{% block content %}
+    <!--=============== MAIN ===============-->
+    <main class="main container" id="main">
+        <section id="paket">
+            <div class="tengah">
+                <div class="kolom">
+                    <h2>Sesuaikan dengan Kebutuhanmu</h2>
+                </div>
+                <div class="paket-list">
+                    <div class="paket-card">
+                        <h3>70/20/10</h3>
+                        <div class="Paket">
+                            <div class="desc-list">
+                                <p>70/20/10 merupakan teknik budgeting sederhana yang biasa digunakan. 70/20/10 sebutan untuk persentase budgeting yang digunakan.</p>
+                                <p>70% untuk kebutuhan pokok, 20% untuk investasi, dan 10% untuk tabungan darurat.</p>
+                            </div>
+                            <a href="{% url '70-20-10' %}" class="buttonbaru">70/20/10</a>
+                        </div>
+                    </div>
+                    <div class="paket-card">
+                        <h3>50/30/20</h3>
+                        <div class="Paket">
+                            <div class="desc-list">
+                                <p>50/30/20 merupakan teknik budgeting sederhana selain 70/20/10. 50/30/20 sebutan untuk persentase budgeting yang digunakan.</p>
+                                <p>50% untuk kebutuhan pokok, 30% untuk keinginan, dan 20% untuk tabungan dan hutang.</p>
+                            </div>
+                            <a href="{% url '50-30-20' %}" class="buttonbaru">50/30/20</a>
+                        </div>
+                    </div>
+                    <div class="paket-card">
+                        <h3>Personalisasi</h3>
+                        <div class="Paket">
+                            <div class="desc-list">
+                                <p>Dengan menggunakan data-data keuangan pribadi yang Anda masukkan, kami akan menganalisis pola pengeluaran, pendapatan, serta target finansial Anda. Berdasarkan algoritma cerdas kami, Anda akan mendapatkan rekomendasi alokasi keuangan yang optimal.</p>
+                            </div>
+                            <a href="#" class="buttonbaru">Coming Soon</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock content %}

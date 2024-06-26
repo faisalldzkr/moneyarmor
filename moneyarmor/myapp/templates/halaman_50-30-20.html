@@ -1,0 +1,451 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--=============== REMIXICONS ===============-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+    
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/front-end-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.googleapis.css' %}">
+    <style>
+        form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            width: 100%;
+            background-color: #0077cc;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 0.8rem;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .tengah {text-align: center;}
+
+        button .remove-tag{
+            width: 100%;
+            padding: 0%;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            width: 100%; /* Penyesuaian lebar input */
+        }
+
+        .add-tag-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px; /* Add margin-bottom for spacing */
+        }
+
+        .add-tag-button {
+            background-color: #0077cc;
+            color: #fff;
+            padding: 10px; /* Mengurangi padding dari 10px menjadi 8px */
+            border: none;
+            border-radius: 4px;
+            font-size: 14px; /* Mengurangi ukuran font dari 16px menjadi 14px */
+            cursor: pointer;
+            margin-left: 10px;
+            width: max-content;
+        }
+
+        .tags-container {margin-top: 1px;}
+        .tag {
+            display: inline-block;
+            background-color: #0077cc;
+            color: #fff;
+            border-radius: 5px;
+            padding: 10px 30px 10px 10px;
+            margin: 2px;
+            font-size: 14px;
+            text-align: left;
+            position: relative;
+        }
+
+        .tag .remove-tag {
+            position: absolute;
+            top: 50%;
+            right: 5px;
+            transform: translateY(-70%);
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+        }
+
+        .tag .remove-tag:hover {
+            background: #ff0000;
+            color: #fff;
+        }
+
+        .result {margin-top: 20px;}
+        .result p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .category-section {margin-bottom: 20px;}
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button-container button {
+            width: 48%; /* Adjust width to fit both buttons */
+        }
+    </style>
+
+    <title>70/20/10</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-toggle" id="header-toggle">
+                <a href="{% url 'alokasi' %}" style="color: white;">
+                    <i class="ri-arrow-left-double-line"></i>
+                </a>
+            </div>
+            <h1>Money Armor</h1>
+            <a href="" class="header-logo">
+                <img src="{% static 'img/removebgPreview2.png' %}" alt="">
+            </a>
+        </div>
+    </header>
+
+    <h1 style="margin-top: 7rem;" class="tengah">50/30/20</h1>
+
+    {% if user.is_authenticated %}
+    <form method="post">
+        {% csrf_token %}
+        <p>Berapa penghasilan Kamu dalam sebulan?</p>
+        <input type="text" id="incomeInput" placeholder="Masukkan angka tanpa titik" value="{{ income }}" />
+        <button type="button" id="calculateButton">Periksa</button>
+
+        <div class="result" id="resultContainer">
+            <div class="category-section">
+                <p>Kategori Penghasilan</p>
+                <div class="add-tag-container">
+                    <input type="text" id="incomeCategoryInput" placeholder="Type here for new category" />
+                    <button type="button" class="add-tag-button" onclick="addIncomeCategory()">+</button>
+                </div>
+                <div class="tags-container" id="incomeCategories">
+                    {% for category in income_categories %}
+                    <span class="tag">{{ category }} <button class="remove-tag" onclick="removeTag(this)">x</button></span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="category-section" id="section70">
+                <p>50% Rp <span id="value70">{{ income|default:0 }}</span></p>
+                <p>Kebutuhan Pokok</p>
+                <div class="add-tag-container">
+                    <input type="text" id="input70" placeholder="Type here for new category" />
+                    <button type="button" class="add-tag-button" onclick="addTag('70')">+</button>
+                </div>
+                <div class="tags-container" id="tags70">
+                    {% for category in categories_70 %}
+                    <span class="tag">{{ category }} <button class="remove-tag" onclick="removeTag(this)">x</button></span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="category-section" id="section20">
+                <p>30% Rp <span id="value20">{{ income|default:0 }}</span></p>
+                <p>Tabungan</p>
+                <div class="add-tag-container">
+                    <input type="text" id="input20" placeholder="Type here for new category" />
+                    <button type="button" class="add-tag-button" onclick="addTag('20')">+</button>
+                </div>
+                <div class="tags-container" id="tags20">
+                    {% for category in categories_20 %}
+                    <span class="tag">{{ category }} <button class="remove-tag" onclick="removeTag(this)">x</button></span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="category-section" id="section10">
+                <p>20% Rp <span id="value10">{{ income|default:0 }}</span></p>
+                <p>Keinginan/Hiburan</p>
+                <div class="add-tag-container">
+                    <input type="text" id="input10" placeholder="Type here for new category" />
+                    <button type="button" class="add-tag-button" onclick="addTag('10')">+</button>
+                </div>
+                <div class="tags-container" id="tags10">
+                    {% for category in categories_10 %}
+                    <span class="tag">{{ category }} <button class="remove-tag" onclick="removeTag(this)">x</button></span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="button-container">
+            <button type="button" id="saveButton">Simpan</button>
+            <button type="button" id="deleteButton">Hapus</button>
+        </div>
+    </form>
+    {% else %}
+    <p>Anda harus login untuk mengakses halaman ini.</p>
+    {% endif %}
+
+    <!-- SweetAlert2 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    
+    <script>
+        document.getElementById('calculateButton').addEventListener('click', () => {
+            // Ambil nilai input dari incomeInput
+            let incomeValue = document.getElementById('incomeInput').value;
+
+            // Hapus karakter non-digit dari nilai input dan konversi menjadi float
+            let cleanValue = incomeValue.replace(/[^\d]/g, '');
+            const income = parseFloat(cleanValue);
+
+            if (!isNaN(income)) {
+                // Lakukan perhitungan berdasarkan persentase
+                const value70 = (income * 0.5).toFixed(2); // 70%
+                const value20 = (income * 0.3).toFixed(2); // 20%
+                const value10 = (income * 0.2).toFixed(2); // 10%
+
+                // Hapus desimal 00 jika ada
+                const formattedValue70 = value70.endsWith('.00') ? parseInt(value70).toString() : value70;
+                const formattedValue20 = value20.endsWith('.00') ? parseInt(value20).toString() : value20;
+                const formattedValue10 = value10.endsWith('.00') ? parseInt(value10).toString() : value10;
+
+                // Tampilkan hasil perhitungan dengan format Rupiah
+                document.getElementById('value70').textContent = formatRupiah(formattedValue70);
+                document.getElementById('value20').textContent = formatRupiah(formattedValue20);
+                document.getElementById('value10').textContent = formatRupiah(formattedValue10);
+
+                // Format ulang nilai input menjadi format Rupiah
+                document.getElementById('incomeInput').value = formatRupiah(income, 'Rp ');
+
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Masukkan angka yang valid',
+                });
+            }
+        });
+
+        function addIncomeCategory() {
+            addTagToContainer('incomeCategoryInput', 'incomeCategories');
+        }
+
+        function addTag(percentage) {
+            addTagToContainer(`input${percentage}`, `tags${percentage}`);
+        }
+
+        function addTagToContainer(inputId, containerId) {
+            const input = document.getElementById(inputId);
+            const tagContainer = document.getElementById(containerId);
+            const tagText = input.value.trim();
+
+            if (tagText !== '') {
+                const newTag = document.createElement('span');
+                newTag.className = 'tag';
+                newTag.innerHTML = `${tagText} <button class="remove-tag" onclick="removeTag(this)">x</button>`;
+                tagContainer.appendChild(newTag);
+                input.value = '';
+            }
+        }
+
+        function removeTag(button) {
+            const tag = button.parentElement;
+            tag.remove();
+        }
+        
+        // Format rupiah
+        function formatRupiah(angka, prefix) {
+            let number_string = angka.replace(/[^,\d]/g, '').toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+    
+            if (ribuan) {
+                let separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+    
+            rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix === undefined ? rupiah : (rupiah ? prefix + ' ' + rupiah : '');
+        }
+
+        // Menggunakan formatRupiah saat input kehilangan fokus
+        document.getElementById('incomeInput').addEventListener('blur', function() {
+            // Mengambil nilai input
+            let cleanValue = this.value.replace(/\D/g, ''); // Menghapus karakter non-digit
+            this.value = formatRupiah(cleanValue, 'Rp '); // Format input dengan formatRupiah
+
+            // Mengambil kembali nilai yang sudah diformat
+            let formattedIncome = formatRupiah(this.value, 'Rp '); // Format ulang dengan formatRupiah
+            this.value = formattedIncome; // Assign kembali nilai yang sudah diformat ke input
+        });
+
+        document.getElementById('saveButton').addEventListener('click', () => {
+            const income = parseFloat(document.getElementById('incomeInput').value.replace(/[^\d]/g, ''));
+            if (!isNaN(income)) {
+                const incomeCategories = getTags('incomeCategories');
+                const categories70 = getTags('tags70');
+                const categories20 = getTags('tags20');
+                const categories10 = getTags('tags10');
+
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                fetch('/save-income-category/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: new URLSearchParams({
+                        income: income,
+                        'income_categories[]': incomeCategories,
+                        'categories_70[]': categories70,
+                        'categories_20[]': categories20,
+                        'categories_10[]': categories10,
+                    }).toString()
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Data berhasil disimpan',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: `Terjadi kesalahan saat menyimpan data: ${data.message}`,
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Terjadi kesalahan saat menyimpan data',
+                    });
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Masukkan angka yang valid',
+                });
+            }
+        });
+
+        document.getElementById('deleteButton').addEventListener('click', () => {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch('/delete-income-data/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Data berhasil dihapus',
+                    });
+                    document.getElementById('incomeInput').value = '';
+                    document.getElementById('incomeCategories').innerHTML = '';
+                    document.getElementById('tags70').innerHTML = '';
+                    document.getElementById('tags20').innerHTML = '';
+                    document.getElementById('tags10').innerHTML = '';
+                    document.getElementById('value70').textContent = '0.00';
+                    document.getElementById('value20').textContent = '0.00';
+                    document.getElementById('value10').textContent = '0.00';
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: `Terjadi kesalahan saat menghapus data: ${data.message}`,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan saat menghapus data',
+                });
+            });
+        });
+
+        function getTags(containerId) {
+            return Array.from(document.querySelectorAll(`#${containerId} .tag`)).map(tag => tag.textContent.replace(' x', '').trim());
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+    </script>
+
+    <script src="{% static 'js/front-end-js.js' %}"></script>  
+</body>
+</html>

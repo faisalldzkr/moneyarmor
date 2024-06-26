@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!--=============== REMIXICONS ===============-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+            
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/front-end-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.googleapis.css' %}">
+    <link rel="stylesheet" href="{% static 'css/langganan.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .accordion label {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            cursor: pointer;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #000;
+            transition: background-color 0.3s, color 0.3s;
+            border: none; /* tambahkan atau perbarui gaya ini */
+            border-radius: 5px;
+        }
+        .accordion label i {
+            transition: transform 0.3s;
+        }
+        .accordion input[type="checkbox"] {
+            display: none;
+        }
+        .accordion input[type="checkbox"]:checked + label i {
+            transform: rotate(180deg);
+        }
+        .accordion .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 10px;
+            background-color: #fff;
+        }
+        .accordion input[type="checkbox"]:checked ~ .content {
+            padding: 10px;
+        }
+    </style>
+    <title>Beranda</title>
+</head>
+<body>
+    <!--=============== HEADER ===============-->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-toggle" id="header-toggle">
+                <i class="ri-menu-line"></i>
+            </div>
+            <h1>Money Armor</h1>
+            <a href="#" class="header-logo">
+                <img src="{% static 'img/removebgPreview2.png' %}" alt="Logo">
+            </a>
+        </div>
+    </header>
+
+    <!--=============== SIDEBAR ===============-->
+    <div class="sidebar" id="sidebar">
+        <nav class="sidebar-container">
+            <div class="sidebar-content">
+                <div class="sidebar-list">
+                    <a href="#home" class="sidebar-link active-link" onclick="navigateToSection('home')">
+                        <i class="ri-home-5-line"></i>
+                        <span class="sidebar-link-name">Dashboard</span>
+                        <span class="sidebar-link-floating">Dashboard</span>
+                    </a>
+                    <a href="#alokasi" class="sidebar-link" onclick="navigateToSection('alokasi')">
+                        <i class="ri-calculator-line"></i>
+                        <span class="sidebar-link-name">Alokasi Dana</span>
+                        <span class="sidebar-link-floating">Alokasi Dana</span>
+                    </a>
+                    <a href="#paket" class="sidebar-link" onclick="navigateToSection('paket')">
+                        <i class="ri-money-dollar-circle-line"></i>
+                        <span class="sidebar-link-name">Langganan</span>
+                        <span class="sidebar-link-floating">Langganan</span>
+                    </a>
+                    <a href="{% url 'login' %}" class="sidebar-link">
+                        <i class="ri-account-circle-line"></i>
+                        <span class="sidebar-link-name">Login</span>
+                        <span class="sidebar-link-floating">Login</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!--=============== MAIN ===============-->
+    <main class="main container" id="main">
+        <div class="wrapper">
+            <!-- untuk tentang kita -->
+            <section id="home">
+                <div class="flex-container">
+                    <img src="https://img.freepik.com/free-vector/environment-data-analytics-abstract-concept_335657-3192.jpg?t=st=1715700768~exp=1715704368~hmac=fb51ce6660f022597a5ed34f0dce646e9891b71dfad0a7703c556272f80cdd1c&w=1060" alt="Environment Data Analytics"/>
+                    <div class="kolom">
+                        <p style="color: #0077cc;">Bersama Money Armor</p>
+                        <h2>Kelola Keuanganmu Mewujudkan Impian</h2>
+                        <p>Platform yang didedikasikan untuk membantu Anda membangun kebiasaan yang dalam mengelola keuangan dan mencapai target tujuan Anda.</p>
+                        <div class="accordion">
+                            <input type="checkbox" id="section1" name="accordion-checkbox" hidden>
+                            <label for="section1">Pelajari Lebih Lanjut <i class="ri-arrow-down-s-line"></i></label>
+                            <div class="content">
+                                <p>Money Armor dilengkapi dengan berbagai fitur canggih yang akan memudahkan Anda dalam mengelola keuangan. Mulai dari pencatatan otomatis transaksi, analisis pola pengeluaran, hingga rekomendasi cara mengoptimalkan keuangan Anda.</p>
+                                <p>Dapatkan gambaran utuh tentang kondisi keuangan Anda melalui laporan dan visualisasi yang menarik. Pantau alokasi dana, tren pengeluaran, dan capaian target dengan mudah melalui dashboard yang dirancang secara ergonomis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="statement"> 
+                <div class="flex-container">
+                    <div class="kolom">
+                        <p style="color: #0077cc;">Kami Membantu Menstabilkan Finansialmu</p>
+                        <h2>Cara Kerja</h2>
+                        <p>Kami menyediakan beragam template anggaran yang dapat disesuaikan dengan kebutuhan Anda. Ciptakan rencana keuangan yang optimal untuk mencapai tujuan finansial Anda, baik itu membayar cicilan, menabung, maupun berinvestasi.</p>
+                        <div class="accordion">
+                            <input type="checkbox" id="section2" name="accordion-checkbox" hidden>
+                            <label for="section2">Pelajari Lebih Lanjut <i class="ri-arrow-down-s-line"></i></label>
+                            <div class="content">
+                                <p>Dengan rekomendasi berbasis data dari Money Armor, Anda akan dapat membuat keputusan keuangan yang lebih cerdas dan tepat sasaran. Wujudkan impian finansial Anda.</p>
+                            </div>
+                        </div>               
+                    </div>
+                    <img src="https://img.freepik.com/free-photo/lady-is-using-mobile-telephone-with-her-business-report-document_1150-6297.jpg?t=st=1715739530~exp=1715743130~hmac=9651b0ba18d63dfce0bd9f215774b6e6e1a58d3180a2e9bafbe9687935a667e4&w=1800" alt="Mobile Financial Management"/>
+                </div>
+            </section>
+
+
+            <!-- untuk artikel -->
+            <div class="centered-text">
+                <p style="color: #0077cc;">Fitur Terbaik</p>
+            </div>
+            <div class="card-container" id="alokasi">
+                <div class="card">
+                    <img src="{% static 'img/pict 1.png' %}" alt="Budgetting 101">
+                    <div class="card-content">
+                        <h3>Budgetting 101</h3>
+                        <p>Perencanaan keuangan yang efektif adalah kunci untuk mencapai stabilitas finansial jangka panjang. Salah satu langkah penting dalam perjalanan keuangan yang sehat adalah mengadopsi metode budgeting yang sesuai dengan gaya hidup dan tujuan Anda. Oleh karena itu, Money armor akan membantu anda untuk memberikan metode budgeting yang efektif hingga membantu Anda mengelola keuangan dengan lebih bijak.</p>
+                        <div class="accordion">
+                            <input type="checkbox" id="section3" name="accordion-checkbox" hidden>
+                            <label for="section3">Pelajari Lebih Lanjut <i class="ri-arrow-down-s-line"></i></label>
+                            <div class="content">
+                                <p>Metode Budgeting 101 adalah sebuah frase yang mengacu pada konsep dasar dan pentingnya membuat anggaran sebagai langkah awal untuk mencapai stabilitas finansial melalui perencanaan yang efektif. Istilah “101” sering digunakan untuk menandakan pengenalan terhadap suatu topik. Dalam konteks ini, itu berarti pengenalan terhadap prinsip-prinsip dasar budgeting atau pembuatan anggaran. Tujuannya adalah untuk membantu individu memahami bagaimana mengelola keuangan mereka dengan lebih baik sehingga mereka dapat mencapai tujuan finansial mereka, seperti tabungan, investasi, atau pengurangan utang.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="{% static 'img/pict 2.png' %}" alt="Metode Budgeting 50/30/20">
+                    <div class="card-content">
+                        <h3>Budgeting 50/30/20</h3>
+                        <p>Jika Anda mulai menyadari pentingnya budgeting atau berniat mendalami pengelolaan keuangan, mungkin Anda perlu mengetahui metode atau aturan 50/30/20. Banyak ulasan yang menyarankan untuk mengikuti metode penganggaran ini. Tapi seberapa efektif metode ini?</p>
+                        <div class="accordion">
+                            <input type="checkbox" id="section4" name="accordion-checkbox" hidden>
+                            <label for="section4">Pelajari Lebih Lanjut <i class="ri-arrow-down-s-line"></i></label>
+                            <div class="content">
+                                <p>Metode budgeting 50/30/20 adalah strategi pengelolaan keuangan yang membagi pendapatan bersih Anda setelah pajak ke dalam tiga kategori utama: 50% dialokasikan untuk kebutuhan dasar seperti sewa, tagihan, makanan, dan transportasi; 30% untuk keinginan atau pengeluaran yang tidak esensial seperti hiburan dan hobi; dan 20% untuk tabungan, investasi, atau pelunasan utang. Pendekatan ini dirancang untuk membantu Anda mencapai keseimbangan antara pengeluaran sehari-hari dan pencapaian tujuan finansial jangka panjang Anda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- untuk paket -->
+            <section id="paket">
+                <div class="tengah">
+                    <div class="kolom">
+                        <h2>Paket Yang Kami Tawarkan</h2>
+                        <p style="color: #0077cc;">Money Armor Membantumu!</p>
+                    </div>
+                    <div class="paket-list">
+                        <div class="paket-card">
+                            <h3>Mulai perjalanan mengelola Finansialmu!</h3>
+                            <div class="Paket">
+                                <div class="paket-title">
+                                    <h1>Free</h1>
+                                </div>
+                                <div class="desc-list">
+                                    <p>Nikmati fitur dasar untuk pengelolaan keuangan anda dan mulai bangun kebiasaan baik tingkatkan literasi finansial hari ini</p>
+                                </div>
+                                <div class="Price">
+                                    <span>Rp. 0,-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="paket-card">
+                            <h3>Mulai perjalanan mengelola Finansialmu!</h3>
+                            <div class="Paket">
+                                <div class="paket-title">
+                                    <h1>Bulanan</h1>
+                                </div>
+                                <div class="desc-list">
+                                    <p>Optimalkan pengelolaan keuangan pribadi Anda dengan Paket Dasar kami untuk satu bulan pertama. Dapatkan fitur tambahan seperti pencatatan otomatis dan laporan keuangan yang lebih detail untuk membantu Anda mencapai tujuan finansialmu</p>
+                                </div>
+                                <div class="Price">
+                                    <span>Rp. 49.900,-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="paket-card">
+                            <h3>Mulai perjalanan mengelola Finansialmu!</h3>
+                            <div class="Paket">
+                                <div class="paket-title">
+                                    <h1>Tahunan</h1>
+                                </div>
+                                <div class="desc-list">
+                                    <p>Raih kontrol penuh atas keuangan Anda dengan Paket Premium satu tahun. Nikmati sistem pengelolaan keuangan yang mudah diakses, rincian pengeluaran, visualisasi data, dan laporan keuangan yang dapat di download sesuka hati. ke konsultasi ahli keuangan untuk perencanaan yang lebih baik</p>
+                                </div>
+                                <div class="Price">
+                                    <span>Rp. 599.000,-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <button class="chatbot-toggler">
+            <span class="material-symbols-outlined">mode_comment</span> 
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="chatbot">
+            <header>
+              <h2>Chatbot</h2>
+              <span class="close-btn material-symbols-outlined">close</span>
+            </header>
+            <ul class="chatbox">
+               <li class="chat incoming">
+                <span class="material-symbols-outlined">smart_toy</span>
+                <p>Halo <br> Apa masalahmu?</p>
+               </li>
+            </ul>
+            <div class="chat-input">
+                <textarea placeholder="Masukkan Sebuah Pesan..." required></textarea>
+                <span id="send-btn" class="material-symbols-outlined">send</span>
+            </div>
+        </div>
+    </main>
+
+    <!--=============== MAIN JS ===============-->
+    <script src="{% static 'js/front-end-js.js' %}"></script>
+
+    <script>
+        function navigateToSection(sectionId) {
+            // Scroll to the section
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+    
+            // Change the URL without reloading the page
+            history.pushState(null, null, '/' + sectionId);
+        }
+    
+        // Ensure the correct section is displayed if the user navigates using the browser's back/forward buttons
+        window.addEventListener('popstate', function (event) {
+            const sectionId = location.pathname.substring(1); // Get the section id from the URL
+            if (sectionId) {
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    
+        // Handle initial load
+        document.addEventListener('DOMContentLoaded', function () {
+            const sectionId = location.pathname.substring(1);
+            if (sectionId) {
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // Accordion double-click close logic
+        document.querySelectorAll('.accordion label').forEach(label => {
+            let lastClick = 0;
+            label.addEventListener('click', function(e) {
+                let currentTime = new Date().getTime();
+                let input = document.getElementById(this.getAttribute('for'));
+                if (currentTime - lastClick < 500) {
+                    if (input.checked) {
+                        input.checked = false;
+                        e.stopPropagation(); // Prevent the radio button from toggling
+                    }
+                }
+                lastClick = currentTime;
+            });
+        });
+
+        // Dynamic max-height for accordion
+        document.querySelectorAll('.accordion input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                let content = this.nextElementSibling.nextElementSibling;
+                if (this.checked) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                } else {
+                    content.style.maxHeight = 0;
+                }
+            });
+        });
+    </script>
+    <script defer src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
